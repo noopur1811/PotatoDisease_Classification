@@ -7,7 +7,7 @@ import tensorflow as tf
 
 app = FastAPI()
 
-MODEL = tf.keras.models.load_model("../models/1.keras")
+endpoint = "http://localhost:8501/v1/models/potatoes_model:predict"
 CLASS_NAMES = ["Early Blight","Late Blight","Healthy"]
 
 @app.get("/ping")
