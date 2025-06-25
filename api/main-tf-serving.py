@@ -3,11 +3,12 @@ import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
+import requests
 import tensorflow as tf
 
 app = FastAPI()
 
-MODEL = tf.keras.models.load_model("../models/1.keras")
+endpoint = "http://localhost:8501/v1/modelspotatoes_model:predict"
 CLASS_NAMES = ["Early Blight","Late Blight","Healthy"]
 
 @app.get("/ping")
@@ -24,11 +25,19 @@ async def predict(
 ):
     image = read_file_as_image(await file.read())
     img_batch = np.expand_dims(image,0)
-    predictions = MODEL.predict(img_batch)
-    index =np.argmax(predictions[0])
-    predicted_class = CLASS_NAMES[index]
-    return{
-        'class' : predicted_class
+
+    json_data = {
+        "instances" : img_batch.tolist()
+    }
+
+    response = requests.post(endpoint, json=json_data)
+    prediction = response.json()["predictions"][0]
+    index = np.argmax(prediction)
+
+    class_name = CLASS_NAMES[index]
+
+    return {
+        "class" : class_name
     }
 
 if __name__ == "__main__":
