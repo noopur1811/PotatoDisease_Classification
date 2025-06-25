@@ -1,5 +1,4 @@
-from distributed import UploadFile, File
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 import uvicorn
 import numpy as np
 from io import BytesIO
@@ -8,7 +7,7 @@ import tensorflow as tf
 
 app = FastAPI()
 
-MODEL = tf.keras.models.load_model("../model/1.keras")
+MODEL = tf.keras.models.load_model("../models/1.keras")
 CLASS_NAMES = ["Early Blight","Late Blight","Healthy"]
 
 @app.get("/ping")
@@ -24,10 +23,13 @@ async def predict(
         file: UploadFile = File(...)
 ):
     image = read_file_as_image(await file.read())
-    
-    MODEL.predict(image)
-
-    return
+    img_batch = np.expand_dims(image,0)
+    predictions = MODEL.predict(img_batch)
+    index =np.argmax(predictions[0])
+    predicted_class = CLASS_NAMES[index]
+    return{
+        'class' : predicted_class
+    }
 
 if __name__ == "__main__":
     uvicorn.run(app,host='localhost',port=8000)
