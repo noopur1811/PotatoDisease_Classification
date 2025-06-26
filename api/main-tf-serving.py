@@ -8,7 +8,7 @@ import tensorflow as tf
 
 app = FastAPI()
 
-endpoint = "http://localhost:8501/v1/modelspotatoes_model:predict"
+endpoint = "http://localhost:8501/v1/models/potatoes_model:predict"
 CLASS_NAMES = ["Early Blight","Late Blight","Healthy"]
 
 @app.get("/ping")
