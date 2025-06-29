@@ -76,7 +76,7 @@ Make sure you have **Docker Desktop running**. Then run the following in **Power
 
 ```bash
 docker run -t --rm -p 8501:8501 `
-  -v "C:\Users\NOOPUR\python practice\plants\models:/models" `
+  -v "yourFilePath\models:/models" `
   tensorflow/serving `
   --model_config_file=/models/models.config
 ```
