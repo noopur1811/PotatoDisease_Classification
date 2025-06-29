@@ -1,139 +1,151 @@
 
-
 # 🥔 Potato Disease Classification
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.95+-green?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?logo=tensorflow)](https://www.tensorflow.org/)
 [![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)](https://reactjs.org/)
+[![Docker](https://img.shields.io/badge/Docker-enabled-blue?logo=docker)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> A full-stack potato disease classification system built using CNN, FastAPI, and React — developed as a follow-along project to learn end-to-end ML deployment.
+> A full-stack potato disease classification system using CNN, TensorFlow Serving, FastAPI, and React — built as a follow-along learning project.
 
 ---
 
 ## 📌 Overview
 
-This project detects diseases in potato plant leaves using a Convolutional Neural Network (CNN). It supports classification into three categories:
+This system classifies potato leaf images into:
 - **Early Blight**
 - **Late Blight**
 - **Healthy**
 
-The system is composed of:
-- A TensorFlow-trained model
-- A FastAPI backend to serve predictions
-- A React-based frontend for user interaction
+It includes:
+- A CNN model trained using TensorFlow
+- Model served using **TensorFlow Serving + Docker**
+- A **FastAPI** backend (optional) that communicates with the serving endpoint
+- A **React** frontend for user interaction
 
 ---
 
-## 📁 Directory Structure
+## 📁 Project Structure
 
 ```
 
 PotatoDisease\_Classification/
-├── api/           # FastAPI backend
-├── frontend/      # React frontend UI
-├── models/        # Saved model (.h5 or TensorFlow format)
-├── training/      # Jupyter notebooks for model training
-├── .idea/
-├── .ipynb\_checkpoints/
+├── api/                      # Optional FastAPI backend
+├── frontend/                 # React frontend
+├── models/
+│   └── potato\_model/
+│       └── 1/                # TensorFlow SavedModel format
+│           ├── saved\_model.pb
+│           └── variables/
+├── models.config             # TensorFlow Serving config file
+├── training/                 # Model training notebooks/scripts
+├── main.py                   # Entry file for FastAPI (run in PyCharm if needed)
 └── README.md
 
 ````
 
 ---
 
-## 🚀 Getting Started
+## 🧠 Model Training
 
-### 🧠 Model Training
+Model training is done using scripts or notebooks in the `training/` directory. The final model is exported using:
 
-Model training is performed using Jupyter notebooks in the `training/` folder. The trained model is exported to the `models/` directory.
-
-> Dataset used: [PlantVillage Potato Dataset](https://www.kaggle.com/datasets/emmarex/plantdisease)
-
-### ⚙️ Backend Setup (FastAPI)
-
-1. Navigate to the API folder:
-
-```bash
-cd api
+```python
+tf.saved_model.save(model, "models/potato_model/1")
 ````
 
-2. Install dependencies:
+Ensure your `models.config` file looks like this:
 
-```bash
-pip install fastapi uvicorn tensorflow pillow python-multipart
+```text
+model_config_list: {
+  config: {
+    name: 'potato_model',
+    base_path: '/models/potato_model',
+    model_platform: 'tensorflow'
+  }
+}
 ```
 
-3. Start the server:
+---
+
+## 🐳 Running TensorFlow Serving via Docker
+
+Make sure you have **Docker Desktop running**. Then run the following in **PowerShell**:
 
 ```bash
-uvicorn main:app --reload
+docker run -t --rm -p 8501:8501 `
+  -v "C:\Users\NOOPUR\python practice\plants\models:/models" `
+  tensorflow/serving `
+  --model_config_file=/models/models.config
 ```
 
-API will be available at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+This hosts your model at:
+`http://localhost:8501/v1/models/potato_model:predict`
 
-### 🖥️ Frontend Setup (React)
+You can send POST requests with image data for inference from:
 
-1. Navigate to the React frontend:
+* The frontend
+* A Python script
+* Postman/cURL
+
+---
+
+## 📦 Frontend (React)
+
+1. Navigate to `frontend/`
 
 ```bash
 cd frontend
 ```
 
-2. Install dependencies:
+2. Install and run:
 
 ```bash
 npm install
-```
-
-3. Start the frontend:
-
-```bash
 npm start
 ```
 
-Runs at [http://localhost:3000](http://localhost:3000) and connects to the FastAPI backend.
+Frontend will be served at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🔌 API Endpoint
+## 📡 Sending Prediction Requests
 
-* **POST** `/predict`
-  Accepts: image file
-  Returns: predicted class as JSON
+If using Python:
 
-Example using `curl`:
+```python
+import requests
+import numpy as np
 
-```bash
-curl -X POST "http://127.0.0.1:8000/predict" -F "file=@sample_leaf.jpg"
+url = "http://localhost:8501/v1/models/potato_model:predict"
+
+# Example input (must match your model input shape)
+data = {"instances": [[[...], [...], ...]]}
+
+response = requests.post(url, json=data)
+print(response.json())
 ```
 
----
-
-## 📦 Tech Stack
-
-* **Frontend**: React, Axios
-* **Backend**: FastAPI, Uvicorn
-* **Modeling**: TensorFlow/Keras
-* **Data**: PlantVillage Potato Dataset
+If using FastAPI (optional), you can call this TF Serving endpoint inside your API routes.
 
 ---
 
-## 📚 Learnings
+## 🧰 Tools & Tech Stack
 
-This project was done as a **follow-along learning experience** to understand:
-
-* Training and saving CNN models
-* Serving ML models via APIs
-* Building a React frontend and connecting it to a Python backend
-* Handling image uploads and predictions end-to-end
+* TensorFlow 2.x
+* TensorFlow Serving (Docker)
+* React
+* FastAPI (optional)
+* PyCharm for development
+* Windows PowerShell for Docker execution
 
 ---
 
 ## ✍️ Author
 
-**Noopur Karkare**
+**Noopur Holmes**
 🔗 [GitHub](https://github.com/noopur1811)
 
 ---
@@ -141,7 +153,5 @@ This project was done as a **follow-along learning experience** to understand:
 ## 🪪 License
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-```
 
 
