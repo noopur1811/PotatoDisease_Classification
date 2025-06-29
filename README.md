@@ -145,7 +145,7 @@ If using FastAPI (optional), you can call this TF Serving endpoint inside your A
 
 ## ✍️ Author
 
-**Noopur Holmes**
+**Noopur Karkare**
 🔗 [GitHub](https://github.com/noopur1811)
 
 ---
