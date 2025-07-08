@@ -132,7 +132,7 @@ If using FastAPI (optional), you can call this TF Serving endpoint inside your A
 
 ---
 
-## 🧰 Tools & Tech Stack
+##  Tools & Tech Stack
 
 * TensorFlow 2.x
 * TensorFlow Serving (Docker)
@@ -143,7 +143,7 @@ If using FastAPI (optional), you can call this TF Serving endpoint inside your A
 
 ---
 
-## ✍️ Author
+## Author
 
 **Noopur Karkare**
 🔗 [GitHub](https://github.com/noopur1811)
